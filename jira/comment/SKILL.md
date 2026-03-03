@@ -11,6 +11,8 @@ Manage Jira work item comments via `acli jira workitem comment`. For detailed fl
 
 `acli` must be installed and authenticated. See [../README.md](../README.md).
 
+Built and tested with `acli version 1.3.13-stable`.
+
 ## Rich Text Formatting
 
 **Do not use Markdown syntax in comments.** Jira will display raw Markdown characters (`**`, `#`, etc.) literally. Instead, use Atlassian Document Format (ADF) JSON to produce rich text.
@@ -25,7 +27,7 @@ To create a rich-formatted comment, use a **two-step create-then-update** workfl
 
 ```bash
 # Step 1: Create a plain-text placeholder
-acli jira workitem comment create --key <ISSUE_KEY> --body "placeholder"
+acli jira workitem comment create --key <ISSUE_KEY> --body "[Agent]"
 
 # Step 2: Get the comment ID
 acli jira workitem comment list --key <ISSUE_KEY> --json
@@ -36,6 +38,16 @@ acli jira workitem comment update --key <ISSUE_KEY> --id <COMMENT_ID> --body-adf
 
 Process substitution `<(echo '...')` feeds inline JSON to `--body-adf` without creating a temp file on disk. This is the recommended approach.
 
+## Comment Prefix
+
+Every comment created by this skill **must** start with a bold `[Agent]` as the first paragraph:
+
+```json
+{ "type": "paragraph", "content": [{ "type": "text", "text": "[Agent]", "marks": [{ "type": "strong" }] }] }
+```
+
+This applies to both rich-text (ADF) and plain-text comments. For plain text, prefix the body with `[Agent] `.
+
 ## Operations
 
 ### Create a Comment (Rich Text)
@@ -44,7 +56,7 @@ For rich-formatted comments, always use the two-step workflow above.
 
 Steps:
 1. Build ADF JSON per [resources/adf-reference.md](resources/adf-reference.md).
-2. Create a plain-text placeholder: `acli jira workitem comment create --key <KEY> --body "placeholder"`
+2. Create a plain-text placeholder: `acli jira workitem comment create --key <KEY> --body "[Agent]"`
 3. List comments to get the new ID: `acli jira workitem comment list --key <KEY> --json`
 4. Update with ADF: `acli jira workitem comment update --key <KEY> --id <ID> --body-adf <(echo '<ADF_JSON>')`
 
@@ -53,7 +65,7 @@ Steps:
 Reference: [resources/create.md](resources/create.md)
 
 ```bash
-acli jira workitem comment create --key <ISSUE_KEY> --body "Plain text comment"
+acli jira workitem comment create --key <ISSUE_KEY> --body "[Agent] Plain text comment"
 ```
 
 ### List / Read Comments
@@ -119,7 +131,7 @@ Use these to discover valid values for `--visibility-role` and `--visibility-gro
 
 ## ADF Quick-Start Template
 
-Minimal ADF comment with a bold label and a paragraph:
+Minimal ADF comment with the required `[Agent]` prefix:
 
 ```json
 {
@@ -129,7 +141,12 @@ Minimal ADF comment with a bold label and a paragraph:
     {
       "type": "paragraph",
       "content": [
-        { "type": "text", "text": "Label: ", "marks": [{ "type": "strong" }] },
+        { "type": "text", "text": "[Agent]", "marks": [{ "type": "strong" }] }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
         { "type": "text", "text": "Description of the update." }
       ]
     }
@@ -138,3 +155,11 @@ Minimal ADF comment with a bold label and a paragraph:
 ```
 
 For headings, lists, code blocks, blockquotes, and other elements, see [resources/adf-reference.md](resources/adf-reference.md).
+
+## Troubleshooting
+
+If you encounter unexpected errors (`INVALID_INPUT`, unrecognized flags, changed behavior):
+
+1. Check the installed CLI version: `acli --version`
+2. Compare against the version at the top of this file.
+3. If they differ, the CLI may have introduced breaking changes. Run the `jira-skill-maintenance` skill to re-validate and update this skill against the current CLI.
