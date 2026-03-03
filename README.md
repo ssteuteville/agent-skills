@@ -1,45 +1,47 @@
 # Agent Skills
 
-A collection of agent skills organized by vertical. Each vertical provides skills for interacting with a specific CLI tool or service.
+Reusable agent skills for automating workflows with external tools and services. Each skill teaches an AI coding agent how to interact with a specific CLI or API — handling authentication quirks, rich formatting, undocumented behaviors, and other details that would otherwise require trial and error.
 
-## Project Structure
+## Available Skills
+
+### [Jira](jira/)
+
+Interact with Jira via the Atlassian CLI (`acli`). Requires `acli` to be installed and authenticated.
+
+| Skill | What it does |
+|-------|--------------|
+| [comment](jira/comment/) | Create, read, update, and delete Jira issue comments with rich text formatting (ADF) |
+
+See the [Jira README](jira/README.md) for setup instructions and full details.
+
+## How It Works
+
+Each top-level folder targets a tool or service. Inside, you'll find:
+
+- **Skill folders** with a `SKILL.md` (instructions the agent follows) and a `resources/` directory (reference docs the agent reads on demand).
+- **A `skill-maintenance/` skill** that helps keep the other skills current when CLIs are upgraded or APIs change. It walks the agent through auditing `--help` output, re-testing workflows, and updating docs.
 
 ```
-agent-skills/
-├── README.md                      # This file
-└── <vertical>/                    # One folder per tool/service (e.g. jira, github)
-    ├── README.md                  # Vertical-level prerequisites and setup
-    ├── <skill-name>/              # Individual skill
-    │   ├── SKILL.md               # Main skill instructions
-    │   └── resources/             # Reference docs the skill can read on demand
-    └── skill-maintenance/         # Maintenance skill for this vertical
-        ├── SKILL.md               # General maintenance workflow
-        └── resources/             # Per-skill maintenance playbooks
-            └── <skill-name>.md
+<vertical>/
+├── README.md                  # Prerequisites and skill summaries
+├── <skill-name>/
+│   ├── SKILL.md               # Agent instructions
+│   └── resources/             # Command references, format guides
+└── skill-maintenance/
+    ├── SKILL.md               # Maintenance workflow
+    └── resources/             # Per-skill maintenance playbooks
 ```
 
-### Verticals
+## Usage
 
-Each vertical is a top-level folder named after the tool or service it targets. A vertical contains:
+Copy or symlink a skill folder into your Cursor skills directory:
 
-- **A README** with prerequisites (installation, authentication) for the underlying CLI or API.
-- **One or more skill folders**, each with a `SKILL.md` and optional `resources/` directory.
-- **A `skill-maintenance/` skill** (see below).
+```bash
+# Personal (available across all projects)
+cp -r jira/comment ~/.cursor/skills/jira-comment
 
-### Skill Maintenance
+# Project-level (shared via repo)
+cp -r jira/comment .cursor/skills/jira-comment
+```
 
-Every vertical includes a `skill-maintenance/` skill. Its purpose is to keep the other skills in that vertical up to date as CLI versions change, APIs evolve, or undocumented quirks are discovered.
-
-The maintenance skill provides:
-
-- A general workflow for auditing CLI `--help` output against skill resource files.
-- Per-skill playbooks in `skill-maintenance/resources/` with specific commands to run, known quirks to re-validate, and test flows to execute with the user.
-- Testing conventions (dedicated test prefix, cleanup requirements, no temp files).
-
-When a CLI is upgraded or a skill starts producing unexpected errors, run the maintenance skill to systematically verify and update the affected skill.
-
-## Verticals Index
-
-| Vertical | CLI | README |
-|----------|-----|--------|
-| Jira | `acli` (Atlassian CLI) | [jira/README.md](jira/README.md) |
+The agent will automatically discover the skill based on its description and apply it when relevant.
