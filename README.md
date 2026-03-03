@@ -38,8 +38,8 @@ The maintenance skill provides:
 
 When a CLI is upgraded or a skill starts producing unexpected errors, run the maintenance skill to systematically verify and update the affected skill.
 
-## Current Verticals
+## Verticals Index
 
-| Vertical | CLI | Skills |
+| Vertical | CLI | README |
 |----------|-----|--------|
-| [jira](jira/) | `acli` (Atlassian CLI) | comment |
+| Jira | `acli` (Atlassian CLI) | [jira/README.md](jira/README.md) |
