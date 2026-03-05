@@ -14,6 +14,14 @@ Interact with Jira via the Atlassian CLI (`acli`). Requires `acli` to be install
 
 See the [Jira README](jira/README.md) for setup instructions and full details.
 
+### [General](general/)
+
+Domain-agnostic skills for structured thinking and problem-solving workflows. No external tools required.
+
+| Skill | What it does |
+|-------|--------------|
+| [how-might-we](general/how-might-we/) | Facilitate "How Might We?" brainstorming sessions — reframe a software engineering challenge into HMW questions, brainstorm solutions, and produce a prioritized summary |
+
 ## How It Works
 
 Each top-level folder targets a tool or service. Inside, you'll find:
