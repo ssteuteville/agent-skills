@@ -4,6 +4,17 @@ Reusable agent skills for automating workflows with external tools and services.
 
 ## Available Skills
 
+### [GitHub](gh/)
+
+Interact with GitHub via the `gh` CLI. Requires `gh` to be installed and authenticated.
+
+| Skill | What it does |
+|-------|--------------|
+| [create-pr](gh/create-pr/) | Create a PR for the current branch with an auto-generated description based on the diff against main |
+| [pr-comment-resolution](gh/pr-comment-resolution/) | Evaluate and resolve unresolved PR review comments, with bot/human thread handling |
+
+See the [GitHub README](gh/README.md) for setup instructions and full details.
+
 ### [Jira](jira/)
 
 Interact with Jira via the Atlassian CLI (`acli`). Requires `acli` to be installed and authenticated.
