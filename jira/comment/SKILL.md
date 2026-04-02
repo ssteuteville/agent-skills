@@ -1,165 +1,51 @@
 ---
 name: jira-comment
-description: Create, read, update, and delete Jira issue comments via the Atlassian CLI (acli). Use when the user wants to add, edit, list, view, or remove comments on a Jira issue or work item, or needs to post rich-formatted notes to Jira.
+description: Create, read, update, and delete Jira issue comments. Prefers Atlassian MCP tools when available, with acli CLI as fallback (see resources/cli-fallback.md).
 ---
 
 # Jira Comment CRUD
 
-Manage Jira work item comments via `acli jira workitem comment`. For detailed flags and options for each command, read the corresponding file in [resources/](resources/).
+Manage Jira issue comments via Atlassian MCP tools. If the MCP server is not connected, read [resources/cli-fallback.md](resources/cli-fallback.md) for CLI instructions.
 
 ## Prerequisites
 
-`acli` must be installed and authenticated. See [../README.md](../README.md).
-
-Built and tested with `acli version 1.3.13-stable`.
-
-## Rich Text Formatting
-
-**Do not use Markdown syntax in comments.** Jira will display raw Markdown characters (`**`, `#`, etc.) literally. Instead, use Atlassian Document Format (ADF) JSON to produce rich text.
-
-See [resources/adf-reference.md](resources/adf-reference.md) for the full ADF node/mark catalogue.
-
-### Critical: Create Does Not Render ADF Properly
-
-The `create` command's `--body` and `--body-file` flags claim to accept ADF, but **inline marks (bold, italic, links, etc.) are silently stripped**. Only the `update` command's `--body-adf` flag reliably renders full ADF.
-
-To create a rich-formatted comment, use a **two-step create-then-update** workflow:
-
-```bash
-# Step 1: Create a plain-text placeholder
-acli jira workitem comment create --key <ISSUE_KEY> --body "[Agent]"
-
-# Step 2: Get the comment ID
-acli jira workitem comment list --key <ISSUE_KEY> --json
-
-# Step 3: Update with rich ADF using process substitution (no temp files needed)
-acli jira workitem comment update --key <ISSUE_KEY> --id <COMMENT_ID> --body-adf <(echo '<ADF_JSON>')
-```
-
-Process substitution `<(echo '...')` feeds inline JSON to `--body-adf` without creating a temp file on disk. This is the recommended approach.
+Every MCP call requires a `cloudId` — use the site hostname (e.g., `skyslope.atlassian.net`). If that fails, call `getAccessibleAtlassianResources` to discover the correct cloud ID.
 
 ## Comment Prefix
 
-Every comment created by this skill **must** start with a bold `[Agent]` as the first paragraph:
+Every comment **must** start with `**[Agent]**` as the first line to signal it was created by an AI agent.
 
-```json
-{ "type": "paragraph", "content": [{ "type": "text", "text": "[Agent]", "marks": [{ "type": "strong" }] }] }
+## Create a Comment
+
+Use `addCommentToJiraIssue` with `contentFormat: "markdown"`. Rich text (bold, links, lists, code blocks) works natively via standard markdown.
+
+Parameters:
+- `cloudId` — site hostname or cloud UUID
+- `issueIdOrKey` — e.g., `PROJ-123`
+- `commentBody` — markdown string starting with `**[Agent]**`
+- `contentFormat` — `"markdown"`
+- `commentVisibility` *(optional)* — `{"type": "role", "value": "Administrators"}` or `{"type": "group", "value": "jira-developers"}`
+
+Example `commentBody`:
+
+```markdown
+**[Agent]**
+
+Completed the migration. Key changes:
+- Updated schema to v3
+- Backfilled `created_at` column
+- [PR link](https://github.com/org/repo/pull/42)
 ```
 
-This applies to both rich-text (ADF) and plain-text comments. For plain text, prefix the body with `[Agent] `.
+## Read / List Comments
 
-## Operations
+Use `getJiraIssue` to retrieve comments embedded in the issue response:
 
-### Create a Comment (Rich Text)
-
-For rich-formatted comments, always use the two-step workflow above.
-
-Steps:
-1. Build ADF JSON per [resources/adf-reference.md](resources/adf-reference.md).
-2. Create a plain-text placeholder: `acli jira workitem comment create --key <KEY> --body "[Agent]"`
-3. List comments to get the new ID: `acli jira workitem comment list --key <KEY> --json`
-4. Update with ADF: `acli jira workitem comment update --key <KEY> --id <ID> --body-adf <(echo '<ADF_JSON>')`
-
-### Create a Comment (Plain Text)
-
-Reference: [resources/create.md](resources/create.md)
-
-```bash
-acli jira workitem comment create --key <ISSUE_KEY> --body "[Agent] Plain text comment"
-```
-
-### List / Read Comments
-
-Reference: [resources/list.md](resources/list.md)
-
-```bash
-# Table format
-acli jira workitem comment list --key <ISSUE_KEY>
-
-# JSON (for parsing comment IDs, authors, bodies)
-acli jira workitem comment list --key <ISSUE_KEY> --json
-```
-
-Steps:
-1. Run the list command with `--key`. Add `--json` when you need to parse the output programmatically.
-2. Each comment in the JSON response has an `id`, `author`, `body` (plain-text rendering), and `visibility`.
-3. Use the `id` field for subsequent update or delete operations.
-
-### Update a Comment
-
-Reference: [resources/update.md](resources/update.md)
-
-```bash
-# Plain text update
-acli jira workitem comment update --key <ISSUE_KEY> --id <COMMENT_ID> --body "New text"
-
-# Rich text update (ADF) — use process substitution:
-acli jira workitem comment update --key <ISSUE_KEY> --id <COMMENT_ID> --body-adf <(echo '<ADF_JSON>')
-```
-
-Steps:
-1. Get the comment ID by listing comments (see above).
-2. For plain text, use `--body`. For rich formatting, build ADF JSON and use `--body-adf <(echo '...')`.
-3. Optionally add `--notify` to alert watchers, or `--visibility-role`/`--visibility-group` to restrict access.
-
-### Delete a Comment
-
-Reference: [resources/delete.md](resources/delete.md)
-
-```bash
-acli jira workitem comment delete --key <ISSUE_KEY> --id <COMMENT_ID>
-```
-
-Steps:
-1. Get the comment ID by listing comments.
-2. Run the delete command with `--key` and `--id`.
-3. Deletion is permanent.
-
-### Check Visibility Options
-
-Reference: [resources/visibility.md](resources/visibility.md)
-
-```bash
-# Available roles for a project
-acli jira workitem comment visibility --role --project <PROJECT_KEY>
-
-# Available groups
-acli jira workitem comment visibility --group
-```
-
-Use these to discover valid values for `--visibility-role` and `--visibility-group` flags on create/update.
-
-## ADF Quick-Start Template
-
-Minimal ADF comment with the required `[Agent]` prefix:
-
-```json
-{
-  "version": 1,
-  "type": "doc",
-  "content": [
-    {
-      "type": "paragraph",
-      "content": [
-        { "type": "text", "text": "[Agent]", "marks": [{ "type": "strong" }] }
-      ]
-    },
-    {
-      "type": "paragraph",
-      "content": [
-        { "type": "text", "text": "Description of the update." }
-      ]
-    }
-  ]
-}
-```
-
-For headings, lists, code blocks, blockquotes, and other elements, see [resources/adf-reference.md](resources/adf-reference.md).
+- `cloudId` — site hostname or cloud UUID
+- `issueIdOrKey` — e.g., `PROJ-123`
+- `fields` — `["comment"]`
+- `responseContentFormat` — `"markdown"`
 
 ## Troubleshooting
 
-If you encounter unexpected errors (`INVALID_INPUT`, unrecognized flags, changed behavior):
-
-1. Check the installed CLI version: `acli --version`
-2. Compare against the version at the top of this file.
-3. If they differ, the CLI may have introduced breaking changes. Run the `jira-skill-maintenance` skill to re-validate and update this skill against the current CLI.
+If `cloudId` is rejected, call `getAccessibleAtlassianResources` to list available Atlassian sites and their cloud IDs.
