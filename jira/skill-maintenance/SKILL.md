@@ -53,3 +53,4 @@ Delete all test artifacts and verify cleanup. Refer to the playbook for skill-sp
 | Skill | Playbook |
 |-------|----------|
 | jira-comment | [resources/comment.md](resources/comment.md) |
+| jira-start-task | [resources/start-task.md](resources/start-task.md) |

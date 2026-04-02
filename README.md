@@ -22,6 +22,7 @@ Interact with Jira via the Atlassian CLI (`acli`). Requires `acli` to be install
 | Skill | What it does |
 |-------|--------------|
 | [comment](jira/comment/) | Create, read, update, and delete Jira issue comments with rich text formatting (ADF) |
+| [start-task](jira/start-task/) | Browse the active sprint, pick a task, create a branch, assign yourself, and transition to in-progress |
 
 See the [Jira README](jira/README.md) for setup instructions and full details.
 

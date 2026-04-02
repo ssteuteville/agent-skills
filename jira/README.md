@@ -28,6 +28,16 @@ Key details:
 - All agent-created comments are prefixed with bold **[Agent]**.
 - Includes resource files documenting every flag for each subcommand (`create`, `list`, `update`, `delete`, `visibility`) and a full ADF reference.
 
+### [start-task](start-task/)
+
+Start working on a Jira task. Handles three scenarios: browsing the active sprint for available tasks, starting a specific task by issue key, or resolving an ambiguous project. Creates a branch from the default branch, assigns the task to the current user, transitions it to the appropriate status for the user's role, and presents the full description to kick off work.
+
+Key details:
+- Role-aware: defaults to developer, checks AGENTS.md/CLAUDE.md/conversation for role definition.
+- Smart branch naming: uses issue key (e.g., `PROJ-123`), adds suffix if branch already exists.
+- Suggests plan mode after presenting the task description.
+- If board statuses are ambiguous, suggests documenting status meanings for future sessions.
+
 ### [skill-maintenance](skill-maintenance/)
 
 Maintenance skill for keeping the above skills up to date. Run this when `acli` is upgraded or a skill starts producing unexpected errors. See [skill-maintenance/SKILL.md](skill-maintenance/SKILL.md) for the workflow.
