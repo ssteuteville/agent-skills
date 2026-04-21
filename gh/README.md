@@ -37,6 +37,17 @@ Key details:
 - Requires explicit user approval before committing, pushing, or resolving anything.
 - All agent replies are prefixed with bold **[Agent]**.
 
+### [review-pr](review-pr/)
+
+Multi-persona code review that posts inline comments directly on a GitHub pull request. No local checkout required — runs entirely through `gh api`.
+
+Key details:
+- 7 review personas cover architecture, bugs, security, MongoDB, DX, code quality, and newcomer clarity.
+- Posts one PR review per persona with inline comments on the relevant lines.
+- Large PRs (500+ lines or 15+ files) are split into related file groups, each reviewed by one agent covering all perspectives.
+- Findings are confidence-scored (0-100); only 80+ are posted.
+- All comments prefixed with `**[{Persona}]**` to identify the reviewing perspective.
+
 ### [skill-maintenance](skill-maintenance/)
 
 Maintenance skill for keeping the above skills up to date. Run this when `gh` is upgraded or a skill starts producing unexpected errors. See [skill-maintenance/SKILL.md](skill-maintenance/SKILL.md) for the workflow.
