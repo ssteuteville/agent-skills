@@ -35,6 +35,16 @@ Domain-agnostic skills for structured thinking and problem-solving workflows. No
 |-------|--------------|
 | [how-might-we](general/how-might-we/) | Facilitate "How Might We?" brainstorming sessions — reframe a software engineering challenge into HMW questions, brainstorm solutions, and produce a prioritized summary |
 
+### [SkySlope](skyslope/)
+
+SkySlope-specific skills wired to the `SK` Jira project, the SkySlope GitHub org, and the Skunks team Slack channels. Requires `gh`, Atlassian/Slack/Calendar MCPs (or `acli` fallback).
+
+| Skill | What it does |
+|-------|--------------|
+| [daily-standup-prep](skyslope/daily-standup-prep/) | Aggregate Jira / GitHub / Slack / Calendar into a paste-ready Yesterday / Today / Blockers summary, then DM it to your self-DM after confirmation |
+
+See the [SkySlope README](skyslope/README.md) for setup instructions and full details.
+
 ## How It Works
 
 Each top-level folder targets a tool or service. Inside, you'll find:
