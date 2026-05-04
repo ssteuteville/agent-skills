@@ -42,6 +42,7 @@ SkySlope-specific skills wired to the `SK` Jira project, the SkySlope GitHub org
 | Skill | What it does |
 |-------|--------------|
 | [daily-standup-prep](skyslope/daily-standup-prep/) | Aggregate Jira / GitHub / Slack / Calendar into a paste-ready Yesterday / Today / Blockers summary, then DM it to your self-DM after confirmation |
+| [eod-note](skyslope/eod-note/) | End-of-day personal log — Shipped / Learned / Open Questions — mining commit bodies and prose for the *why* behind the day's work, then drafted to your self-DM |
 
 See the [SkySlope README](skyslope/README.md) for setup instructions and full details.
 
