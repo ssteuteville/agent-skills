@@ -13,6 +13,7 @@ Interact with GitHub via the `gh` CLI. Requires `gh` to be installed and authent
 | [create-pr](gh/create-pr/) | Create a PR for the current branch with an auto-generated description based on the diff against main |
 | [pr-comment-resolution](gh/pr-comment-resolution/) | Evaluate and resolve unresolved PR review comments, with bot/human thread handling |
 | [review-pr](gh/review-pr/) | Multi-persona PR review — posts inline comments from 7 specialized agents, confidence-scored, adapts to large PRs |
+| [pr-attach-file](gh/pr-attach-file/) | Attach a local file (screenshot, diagram, PDF, etc.) to a PR description by committing it to a sibling `{branch}_screenshots` branch and splicing the `github.com/.../?raw=true` URL into the body |
 
 See the [GitHub README](gh/README.md) for setup instructions and full details.
 

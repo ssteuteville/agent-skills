@@ -54,3 +54,4 @@ Delete all test artifacts and verify cleanup. Refer to the playbook for skill-sp
 |-------|----------|
 | gh-create-pr | [resources/create-pr.md](resources/create-pr.md) |
 | gh-pr-comment-resolution | [resources/pr-comment-resolution.md](resources/pr-comment-resolution.md) |
+| gh-pr-attach-file | [resources/pr-attach-file.md](resources/pr-attach-file.md) |

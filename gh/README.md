@@ -48,6 +48,17 @@ Key details:
 - Findings are confidence-scored (0-100); only 80+ are posted.
 - All comments prefixed with `**[{Persona}]**` to identify the reviewing perspective.
 
+### [pr-attach-file](pr-attach-file/)
+
+Attach one or more local files (screenshots, diagrams, GIFs, PDFs, flamegraphs — anything) to a PR's description by committing them to a sibling `{branch}_screenshots` branch and splicing the raw GitHub URL into the PR body. Source-agnostic — hand it a path on disk.
+
+Key details:
+- Pushes files via `git worktree` to an orphan sibling branch, so the working tree and feature-branch history are untouched.
+- Builds `https://github.com/<owner>/<repo>/blob/<branch>/<file>?raw=true` URLs that render inline in both public and private PRs.
+- Images embed as `![](url)`; other files (PDFs, etc.) embed as `[name](url)`.
+- Edits the PR body with `gh pr edit --body-file` after explicit user confirmation.
+- For inline video playback (vs. download links), use the separate `github-pr-video` skill instead.
+
 ### [skill-maintenance](skill-maintenance/)
 
 Maintenance skill for keeping the above skills up to date. Run this when `gh` is upgraded or a skill starts producing unexpected errors. See [skill-maintenance/SKILL.md](skill-maintenance/SKILL.md) for the workflow.
